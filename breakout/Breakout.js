@@ -5,10 +5,9 @@
  * This program implements the Breakout game.
  */
 
-"use strict";
+"use strict"; // "strict mode" Enabled
 
 /* Constants */
-
 const GWINDOW_WIDTH = 360;           /* Width of the graphics window      */
 const GWINDOW_HEIGHT = 600;          /* Height of the graphics window     */
 const N_ROWS = 10;                   /* Number of brick rows              */
@@ -16,7 +15,7 @@ const N_COLS = 10;                   /* Number of brick columns           */
 const BRICK_ASPECT_RATIO = 4 / 1;    /* Width to height ratio of a brick  */
 const BRICK_TO_BALL_RATIO = 3 / 2;   /* Ratio of brick width to ball size */
 const BRICK_TO_PADDLE_RATIO = 2 / 3; /* Ratio of brick to paddle width    */
-const BRICK_SEP = 3;                 /* Separation between bricks         */
+const BRICK_SEP = 2;                 /* Separation between bricks         */
 const TOP_FRACTION = 0.1;            /* Fraction of window above bricks   */
 const BOTTOM_FRACTION = 0.05;        /* Fraction of window below paddle   */
 const N_BALLS = 3;                   /* Number of balls in a game         */
@@ -26,8 +25,7 @@ const MIN_X_VELOCITY = 1.0;          /* Minimum random x velocity         */
 const MAX_X_VELOCITY = 3.0;          /* Maximum random x velocity         */
 const GWINDOW_START_X = 0;
 const GWINDOW_START_Y = 0;
-
-var BRICKS_COLORS = ["Red", "Orange", "Pink", "Green", "Blue"];
+const BRICKS_COLORS = ["Red", "Orange", "Green", "Cyan", "Blue"];
 /* Derived constants */
 
 const BRICK_WIDTH = (GWINDOW_WIDTH - (N_COLS + 1) * BRICK_SEP) / N_COLS;
@@ -35,6 +33,7 @@ const BRICK_HEIGHT = BRICK_WIDTH / BRICK_ASPECT_RATIO;
 const PADDLE_WIDTH = BRICK_WIDTH / BRICK_TO_PADDLE_RATIO;
 const PADDLE_HEIGHT = BRICK_HEIGHT / BRICK_TO_PADDLE_RATIO;
 const PADDLE_Y = (1 - BOTTOM_FRACTION) * GWINDOW_HEIGHT - PADDLE_HEIGHT;
+const PADDLE_X_INIT = Math.floor(GWINDOW_WIDTH / 2 - PADDLE_WIDTH / 2);
 const BALL_SIZE = BRICK_WIDTH / BRICK_TO_BALL_RATIO;
 
 /* Main program */
@@ -42,7 +41,7 @@ const BALL_SIZE = BRICK_WIDTH / BRICK_TO_BALL_RATIO;
 function Breakout() {
   let gw = GWindow(GWINDOW_WIDTH, GWINDOW_HEIGHT);
   setUpBricks(gw);
-  
+  createPaddle(gw);
 }
 
 function setUpBricks(gw) {
@@ -60,4 +59,17 @@ function setUpBricks(gw) {
     }
     start_y += BRICK_HEIGHT + BRICK_SEP;
   }
+}
+
+function createPaddle(gw) {
+  let paddle_x = PADDLE_X_INIT;
+  let paddle = GRect(paddle_x, PADDLE_Y, PADDLE_WIDTH, PADDLE_HEIGHT);
+  paddle.setColor("Black");
+  paddle.setFilled(true);
+  gw.add(paddle);
+  let mouseMoveAction = function(e) {
+    paddle_x = e.getX() - PADDLE_WIDTH / 2;
+    paddle.setLocation(paddle_x, PADDLE_Y);
+  };
+  gw.addEventListener("mousemove", mouseMoveAction);
 }
