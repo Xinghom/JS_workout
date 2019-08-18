@@ -69,6 +69,11 @@ function createPaddle(gw) {
   gw.add(paddle);
   let mouseMoveAction = function(e) {
     paddle_x = e.getX() - PADDLE_WIDTH / 2;
+    if(paddle_x < 0) {
+      paddle_x = 0;
+    } else if (paddle_x > GWINDOW_WIDTH - PADDLE_WIDTH) {
+      paddle_x = GWINDOW_WIDTH - PADDLE_WIDTH;
+    }
     paddle.setLocation(paddle_x, PADDLE_Y);
   };
   gw.addEventListener("mousemove", mouseMoveAction);
