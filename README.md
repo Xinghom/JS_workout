@@ -6,7 +6,10 @@
 
     ![gif](./breakout/breakout_stage2.gif)
 
-- [ ] Milestone 3: Create a ball and get it to bounce off the walls
+- [x] Milestone 3: Create a ball and get it to bounce off the walls
+  
+    ![gif](./breakout/breakout_stage3.gif)
+
 - [ ] Milestone 4: Checking for collisions
 - [ ] Milestone 5: Finishing up
 - [ ] Possible extensions
