@@ -89,12 +89,16 @@ function setUpBall(gw, v) {
   ball.setColor("Gray");
   ball.setFilled(true);
   gw.add(ball);
-  
+
+  let startText = GLabel("Click to Start", ball_x - BALL_SIZE, ball_y - BALL_SIZE);
+  gw.add(startText);
+
   let clickAction = function(e) {
     if(v[0] === 0 && v[1] === 0) {
       v[1] = INITIAL_Y_VELOCITY; // vx
       v[0] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vy
       animatedBall(ball, v);
+      gw.remove(startText);
     }
     return;
   }
