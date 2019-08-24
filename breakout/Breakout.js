@@ -112,13 +112,20 @@ function animatedBall(ball, v) {
     if(isCollided(ball_center_x, ball_center_y, "left") || isCollided(ball_center_x, ball_center_y, "right")) {
       v[0] = -v[0];
     } 
-    if (isCollided(ball_center_x, ball_center_y, "top") || isCollided(ball_center_x, ball_center_y, "bottom")) {
+    if (isCollided(ball_center_x, ball_center_y, "top")) {
       v[1] = -v[1];
+    }
+
+    // Game Over
+    if (isCollided(ball_center_x, ball_center_y, "bottom")) {
+      v[0] = 0;
+      v[1] = 0;
+      console.log("GAME OVER >.<");
+      clearInterval(timer);
     }
     ball.move(v[0], v[1]);
   }
-  let temp = setInterval(moveAction, TIME_STEP);
-  console.log("return Value: "+ temp);
+  let timer = setInterval(moveAction, TIME_STEP);
 }
 
 function isCollided(x, y, boundary) {
@@ -133,4 +140,10 @@ function isCollided(x, y, boundary) {
   }
   console.exception(boundary + " is invalid input for isCollided()");
   return false;
+}
+
+function addTextOnGWINDOW(gw, t, x, y) {
+  let text = GLabel(t, x, y);
+  gw.add(text);
+  return text;
 }
