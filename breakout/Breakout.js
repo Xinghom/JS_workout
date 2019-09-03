@@ -46,7 +46,7 @@ function Breakout() {
   let paddle = setUpPaddle(gw);
 
   var v = [0,0]; // vx, vy
-  let ball = setUpBall(gw, v);
+  let ball = setUpBall(gw, v, paddle);
 }
 
 function setUpBricks(gw) {
@@ -85,7 +85,7 @@ function setUpPaddle(gw) {
   return paddle;
 }
 
-function setUpBall(gw, v) {
+function setUpBall(gw, v, paddle) {
   let ball_x = GWINDOW_WIDTH / 2 - BALL_SIZE / 2;
   let ball_y = GWINDOW_HEIGHT / 2 - BALL_SIZE / 2;
   let ball = GOval(ball_x, ball_y, BALL_SIZE, BALL_SIZE);
@@ -100,7 +100,7 @@ function setUpBall(gw, v) {
     if(v[0] === 0 && v[1] === 0) {
       v[1] = INITIAL_Y_VELOCITY; // vx
       v[0] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vy
-      animatedBall(gw, ball, v);
+      animatedBall(gw, ball, v, paddle);
       gw.remove(startText);
     }
   }
@@ -108,12 +108,18 @@ function setUpBall(gw, v) {
   return ball;
 }
 
-function animatedBall(gw, ball, v) {
+function animatedBall(gw, ball, v, paddle) {
   let moveAction = function(e) {
     let ball_center_x = ball.getX() + BALL_RADIUS;
     let ball_center_y = ball.getY() + BALL_RADIUS;
 
-    console.log(getCollidingObject(gw, ball));
+    let collidedObj = getCollidingObject(gw, ball);
+    if(collidedObj) {
+      v[1] = -v[1];
+      if(collidedObj !== paddle) {
+        gw.remove(collidedObj);
+      }
+    }
 
     if(isCollided(ball_center_x, ball_center_y, "left") || isCollided(ball_center_x, ball_center_y, "right")) {
       v[0] = -v[0];
