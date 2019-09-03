@@ -26,6 +26,9 @@ const MAX_X_VELOCITY = 3.0;          /* Maximum random x velocity         */
 const GWINDOW_START_X = 0;
 const GWINDOW_START_Y = 0;
 const BRICKS_COLORS = ["Red", "Orange", "Green", "Cyan", "Blue"];
+const SPEED_UP_RATE = 2.5;
+const SLOW_DOWN_RATE = 0.02;
+const BALANCED_SPEED = 1;
 /* Derived constants */
 
 const BRICK_WIDTH = (GWINDOW_WIDTH - (N_COLS + 1) * BRICK_SEP) / N_COLS;
@@ -36,15 +39,14 @@ const PADDLE_Y = (1 - BOTTOM_FRACTION) * GWINDOW_HEIGHT - PADDLE_HEIGHT;
 const PADDLE_X_INIT = Math.floor(GWINDOW_WIDTH / 2 - PADDLE_WIDTH / 2);
 const BALL_SIZE = BRICK_WIDTH / BRICK_TO_BALL_RATIO;
 const BALL_RADIUS = BALL_SIZE / 2;
+let V_XY_RATIO = 0;
 
 /* Main program */
 function Breakout() {
   let gw = GWindow(GWINDOW_WIDTH, GWINDOW_HEIGHT);
-  let numOBJ = 0;
+
   setUpBricks(gw);
-
   let paddle = setUpPaddle(gw);
-
   var v = [0,0]; // vx, vy
   let ball = setUpBall(gw, v, paddle);
 }
@@ -98,8 +100,9 @@ function setUpBall(gw, v, paddle) {
 
   let clickAction = function(e) {
     if(v[0] === 0 && v[1] === 0) {
-      v[1] = INITIAL_Y_VELOCITY; // vx
-      v[0] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vy
+      v[0] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vx
+      v[1] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vy
+      V_XY_RATIO = v[0] / v[1];
       animatedBall(gw, ball, v, paddle);
       gw.remove(startText);
     }
@@ -113,14 +116,18 @@ function animatedBall(gw, ball, v, paddle) {
     let ball_center_x = ball.getX() + BALL_RADIUS;
     let ball_center_y = ball.getY() + BALL_RADIUS;
 
+    addAirResistance(v);
+
     let collidedObj = getCollidingObject(gw, ball);
     if(collidedObj) {
       if(collidedObj !== paddle) {
         v[1] = -v[1];
+        speedUpBall(v, "vertical");
         gw.remove(collidedObj);
       } else {
         if(v[1] > 0)
           v[1] = -v[1];
+          speedUpBall(v, "vertical");
       }
     }
 
@@ -136,6 +143,7 @@ function animatedBall(gw, ball, v, paddle) {
       window.alert("GAME OVER >.<");
       clearInterval(timer);
     }
+    console.log("v:" + v[0] + "  " + v[1]);
     ball.move(v[0], v[1]);
   }
   let timer = setInterval(moveAction, TIME_STEP);
@@ -171,4 +179,36 @@ function getCollidingObject(gw, ball) {
       :  gw.getElementAt(left[0], left[1]) !== null ? gw.getElementAt(left[0], left[1])
       :  gw.getElementAt(right[0], right[1]) !== null ? gw.getElementAt(right[0], right[1])
       :  null;
+}
+
+function speedUpBall(v, dir) {
+  //speed up x
+  if(dir === "horizontal") {
+    if(v[0] < 0) 
+      v[0] -= SPEED_UP_RATE;
+    else 
+      v[0] += SPEED_UP_RATE;
+  }
+
+  //speed up y
+  if(dir === "vertical") {
+    if(v[1] < 0) 
+      v[1] -= SPEED_UP_RATE;
+    else 
+      v[1] += SPEED_UP_RATE;
+  }
+}
+
+function addAirResistance(v) {
+  //slow down vx
+  if(v[0] < 0 && Math.abs(v[0]) > BALANCED_SPEED*V_XY_RATIO) 
+    v[0] += SLOW_DOWN_RATE;
+  else if (v[0] > 0 && v[0] > BALANCED_SPEED*V_XY_RATIO) 
+    v[0] -= SLOW_DOWN_RATE;
+
+  //slow down vy
+  if(v[1] < 0 && Math.abs(v[1]) > BALANCED_SPEED ) 
+    v[1] += SLOW_DOWN_RATE;
+  else if(v[1] > 0 && v[1] > BALANCED_SPEED)
+    v[1] -= SLOW_DOWN_RATE;
 }
