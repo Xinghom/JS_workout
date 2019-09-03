@@ -1,5 +1,7 @@
 # Game - Breakout
 
+Click Here to Play![link](./breakout/breakout.html)
+
 ## Milestones:
 - [x] Milestone 1: Set up the bricks
 - [x] Milestone 2: Create the paddle
