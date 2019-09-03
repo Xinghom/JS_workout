@@ -10,6 +10,6 @@
   
     ![gif](./breakout/breakout_stage3.gif)
 
-- [ ] Milestone 4: Checking for collisions
+- [x] Milestone 4: Checking for collisions
 - [ ] Milestone 5: Finishing up
 - [ ] Possible extensions
