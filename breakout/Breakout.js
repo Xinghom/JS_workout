@@ -26,9 +26,11 @@ const MAX_X_VELOCITY = 3.0;          /* Maximum random x velocity         */
 const GWINDOW_START_X = 0;
 const GWINDOW_START_Y = 0;
 const BRICKS_COLORS = ["Red", "Orange", "Green", "Cyan", "Blue"];
-const SPEED_UP_RATE = 2.5;
+const SPEED_UP_RATE = 1.5;
 const SLOW_DOWN_RATE = 0.02;
-const BALANCED_SPEED = 1;
+const MAX_SPEED = 7;
+const MIN_SPEED = 0.1;
+const RATIO_GRAVITY = 0.98;
 /* Derived constants */
 
 const BRICK_WIDTH = (GWINDOW_WIDTH - (N_COLS + 1) * BRICK_SEP) / N_COLS;
@@ -116,13 +118,13 @@ function animatedBall(gw, ball, v, paddle) {
     let ball_center_x = ball.getX() + BALL_RADIUS;
     let ball_center_y = ball.getY() + BALL_RADIUS;
 
-    addAirResistance(v);
+    addGravity(v);
 
     let collidedObj = getCollidingObject(gw, ball);
     if(collidedObj) {
       if(collidedObj !== paddle) {
         v[1] = -v[1];
-        speedUpBall(v, "vertical");
+        // speedUpBall(v, "vertical");
         gw.remove(collidedObj);
       } else {
         if(v[1] > 0)
@@ -199,16 +201,10 @@ function speedUpBall(v, dir) {
   }
 }
 
-function addAirResistance(v) {
-  //slow down vx
-  if(v[0] < 0 && Math.abs(v[0]) > BALANCED_SPEED*V_XY_RATIO) 
-    v[0] += SLOW_DOWN_RATE;
-  else if (v[0] > 0 && v[0] > BALANCED_SPEED*V_XY_RATIO) 
-    v[0] -= SLOW_DOWN_RATE;
-
+function addGravity(v) {
   //slow down vy
-  if(v[1] < 0 && Math.abs(v[1]) > BALANCED_SPEED ) 
-    v[1] += SLOW_DOWN_RATE;
-  else if(v[1] > 0 && v[1] > BALANCED_SPEED)
-    v[1] -= SLOW_DOWN_RATE;
+  if(v[1] < 0 && Math.abs(v[1]) >= MIN_SPEED) 
+    v[1] = v[1] * RATIO_GRAVITY;
+  else if(v[1] > 0 && v[1] <= MAX_SPEED)
+    v[1] = v[1] * (RATIO_GRAVITY + 0.04);
 }
