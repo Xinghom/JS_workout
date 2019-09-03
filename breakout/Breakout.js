@@ -38,13 +38,15 @@ const BALL_SIZE = BRICK_WIDTH / BRICK_TO_BALL_RATIO;
 const BALL_RADIUS = BALL_SIZE / 2;
 
 /* Main program */
-
 function Breakout() {
   let gw = GWindow(GWINDOW_WIDTH, GWINDOW_HEIGHT);
+  let numOBJ = 0;
   setUpBricks(gw);
-  setUpPaddle(gw);
+
+  let paddle = setUpPaddle(gw);
+
   var v = [0,0]; // vx, vy
-  setUpBall(gw, v);
+  let ball = setUpBall(gw, v);
 }
 
 function setUpBricks(gw) {
@@ -80,6 +82,7 @@ function setUpPaddle(gw) {
     paddle.setLocation(paddle_x, PADDLE_Y);
   };
   gw.addEventListener("mousemove", mouseMoveAction);
+  return paddle;
 }
 
 function setUpBall(gw, v) {
@@ -97,18 +100,21 @@ function setUpBall(gw, v) {
     if(v[0] === 0 && v[1] === 0) {
       v[1] = INITIAL_Y_VELOCITY; // vx
       v[0] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vy
-      animatedBall(ball, v);
+      animatedBall(gw, ball, v);
       gw.remove(startText);
     }
-    return;
   }
   gw.addEventListener("click", clickAction);
+  return ball;
 }
 
-function animatedBall(ball, v) {
+function animatedBall(gw, ball, v) {
   let moveAction = function(e) {
     let ball_center_x = ball.getX() + BALL_RADIUS;
     let ball_center_y = ball.getY() + BALL_RADIUS;
+
+    console.log(getCollidingObject(gw, ball));
+
     if(isCollided(ball_center_x, ball_center_y, "left") || isCollided(ball_center_x, ball_center_y, "right")) {
       v[0] = -v[0];
     } 
@@ -118,9 +124,7 @@ function animatedBall(ball, v) {
 
     // Game Over
     if (isCollided(ball_center_x, ball_center_y, "bottom")) {
-      v[0] = 0;
-      v[1] = 0;
-      console.log("GAME OVER >.<");
+      window.alert("GAME OVER >.<");
       clearInterval(timer);
     }
     ball.move(v[0], v[1]);
@@ -146,4 +150,16 @@ function addTextOnGWINDOW(gw, t, x, y) {
   let text = GLabel(t, x, y);
   gw.add(text);
   return text;
+}
+
+function getCollidingObject(gw, ball) {
+  let top = [ball.getX()+BALL_RADIUS, ball.getY()-1]; 
+  let bottom = [ball.getX()+BALL_RADIUS, ball.getY()+BALL_SIZE+1];
+  let left = [ball.getX()-1, ball.getY()+BALL_RADIUS];
+  let right = [ball.getX()+BALL_SIZE, ball.getY()+BALL_RADIUS+1];
+  return gw.getElementAt(top[0], top[1]) !== null ? gw.getElementAt(top[0], top[1])
+      :  gw.getElementAt(bottom[0], bottom[1]) !== null ? gw.getElementAt(bottom[0], bottom[1])
+      :  gw.getElementAt(left[0], left[1]) !== null ? gw.getElementAt(left[0], left[1])
+      :  gw.getElementAt(right[0], right[1]) !== null ? gw.getElementAt(right[0], right[1])
+      :  null;
 }
