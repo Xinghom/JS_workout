@@ -115,9 +115,12 @@ function animatedBall(gw, ball, v, paddle) {
 
     let collidedObj = getCollidingObject(gw, ball);
     if(collidedObj) {
-      v[1] = -v[1];
       if(collidedObj !== paddle) {
+        v[1] = -v[1];
         gw.remove(collidedObj);
+      } else {
+        if(v[1] > 0)
+          v[1] = -v[1];
       }
     }
 
