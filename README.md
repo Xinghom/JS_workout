@@ -14,4 +14,9 @@
 
 - [x] Milestone 4: Checking for collisions
 - [ ] Milestone 5: Finishing up
+  - [ ] sticky bricks
+
 - [ ] Possible extensions
+  - [x] gravity
+  - [ ] score boarding
+  - [ ] multiple chances to kill the game
