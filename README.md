@@ -1,6 +1,6 @@
 # Game - Breakout
 
-Click Here to Play![link](./breakout/breakout.html)
+[Click Here to Play](https://github.com/Xinghom/JS_workout/blob/master/breakout/breakout.html)
 
 ## Milestones:
 - [x] Milestone 1: Set up the bricks
