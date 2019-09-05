@@ -13,10 +13,11 @@
     ![gif](./breakout/breakout_stage3.gif)
 
 - [x] Milestone 4: Checking for collisions
-- [ ] Milestone 5: Finishing up
-  - [ ] sticky bricks
+- [x] Milestone 5: Finishing up
+  - [x] defeat - to restart
+  - [x] victory -  to restart
 
 - [ ] Possible extensions
   - [x] gravity
-  - [ ] score boarding
-  - [ ] multiple chances to kill the game
+  - [ ] score board ranking
+  - [ ] Ultimation!!

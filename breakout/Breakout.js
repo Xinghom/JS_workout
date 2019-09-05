@@ -26,10 +26,10 @@ const MAX_X_VELOCITY = 3.0;          /* Maximum random x velocity         */
 const GWINDOW_START_X = 0;
 const GWINDOW_START_Y = 0;
 const BRICKS_COLORS = ["Red", "Orange", "Green", "Cyan", "Blue"];
-const SPEED_UP_RATE = 1.5;
+const SPEED_UP_RATE = 3.5;
 const SLOW_DOWN_RATE = 0.02;
 const MAX_SPEED = 7;
-const MIN_SPEED = 0.1;
+const MIN_SPEED = 0.4;
 const RATIO_GRAVITY = 0.98;
 /* Derived constants */
 
@@ -42,6 +42,7 @@ const PADDLE_X_INIT = Math.floor(GWINDOW_WIDTH / 2 - PADDLE_WIDTH / 2);
 const BALL_SIZE = BRICK_WIDTH / BRICK_TO_BALL_RATIO;
 const BALL_RADIUS = BALL_SIZE / 2;
 let V_XY_RATIO = 0;
+let GAME_IS_OVER = false;
 
 /* Main program */
 function Breakout() {
@@ -51,6 +52,27 @@ function Breakout() {
   let paddle = setUpPaddle(gw);
   var v = [0,0]; // vx, vy
   let ball = setUpBall(gw, v, paddle);
+
+  // Ball animation - click to start/play
+  let startText = GLabel("Click to Start", ball.getX() - BALL_SIZE, ball.getY() - BALL_SIZE);
+  gw.add(startText);
+  let clickAction = function(e) {
+    if(v[0] === 0 && v[1] === 0 && !GAME_IS_OVER) {
+      v[0] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vx
+      v[1] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vy
+      V_XY_RATIO = v[0] / v[1];
+      if(randomChance()) v[0] = -v[0];
+      animatedBall(gw, ball, v, paddle);
+      gw.remove(startText);
+    } else if (GAME_IS_OVER) { // GAME IS OVER
+      GAME_IS_OVER = false;
+      setUpBricks(gw);
+      paddle = setUpPaddle(gw);
+      ball = setUpBall(gw, v, paddle);
+      gw.add(startText);
+    }
+  }
+  gw.addEventListener("click", clickAction);
 }
 
 function setUpBricks(gw) {
@@ -86,6 +108,12 @@ function setUpPaddle(gw) {
     paddle.setLocation(paddle_x, PADDLE_Y);
   };
   gw.addEventListener("mousemove", mouseMoveAction);
+
+  let doubleClickAction = function(e) {
+    ultimatePaddle(gw, paddle);
+  }
+  gw.addEventListener("dblclick", doubleClickAction);
+
   return paddle;
 }
 
@@ -96,20 +124,6 @@ function setUpBall(gw, v, paddle) {
   ball.setColor("Gray");
   ball.setFilled(true);
   gw.add(ball);
-
-  let startText = GLabel("Click to Start", ball_x - BALL_SIZE, ball_y - BALL_SIZE);
-  gw.add(startText);
-
-  let clickAction = function(e) {
-    if(v[0] === 0 && v[1] === 0) {
-      v[0] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vx
-      v[1] = randomReal(MIN_X_VELOCITY, MAX_X_VELOCITY); // vy
-      V_XY_RATIO = v[0] / v[1];
-      animatedBall(gw, ball, v, paddle);
-      gw.remove(startText);
-    }
-  }
-  gw.addEventListener("click", clickAction);
   return ball;
 }
 
@@ -124,8 +138,17 @@ function animatedBall(gw, ball, v, paddle) {
     if(collidedObj) {
       if(collidedObj !== paddle) {
         v[1] = -v[1];
-        // speedUpBall(v, "vertical");
         gw.remove(collidedObj);
+        
+        // Win
+        if(killedTheGame(gw)) {
+          window.alert("Winner Winner Chicken Dinner!! ^.-");
+          clearInterval(timer);
+          v[0] = 0;
+          v[1] = 0;
+          gw.clear();
+          GAME_IS_OVER = true;
+        }
       } else {
         if(v[1] > 0)
           v[1] = -v[1];
@@ -142,8 +165,12 @@ function animatedBall(gw, ball, v, paddle) {
 
     // Game Over
     if (isCollided(ball_center_x, ball_center_y, "bottom")) {
-      window.alert("GAME OVER >.<");
+      window.alert("GAME OVER >.< Click it to replay");
       clearInterval(timer);
+      v[0] = 0;
+      v[1] = 0;
+      gw.clear();
+      GAME_IS_OVER = true;
     }
     console.log("v:" + v[0] + "  " + v[1]);
     ball.move(v[0], v[1]);
@@ -206,5 +233,14 @@ function addGravity(v) {
   if(v[1] < 0 && Math.abs(v[1]) >= MIN_SPEED) 
     v[1] = v[1] * RATIO_GRAVITY;
   else if(v[1] > 0 && v[1] <= MAX_SPEED)
-    v[1] = v[1] * (RATIO_GRAVITY + 0.04);
+    v[1] = v[1] * (2 - RATIO_GRAVITY);
+}
+
+function killedTheGame(gw) {
+  return gw.getElementCount() === 2;
+}
+
+function ultimatePaddle(gw, paddle) {
+  paddle.setLocation(2, PADDLE_Y);
+  paddle.setSize(GWINDOW_WIDTH - 4, PADDLE_HEIGHT);
 }
