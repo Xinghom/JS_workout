@@ -26,11 +26,11 @@ const MAX_X_VELOCITY = 3.0;          /* Maximum random x velocity         */
 const GWINDOW_START_X = 0;
 const GWINDOW_START_Y = 0;
 const BRICKS_COLORS = ["Red", "Orange", "Green", "Cyan", "Blue"];
-const SPEED_UP_RATE = 3.5;
+let SPEED_UP_RATE = 3.5;
 const SLOW_DOWN_RATE = 0.02;
-const MAX_SPEED = 7;
-const MIN_SPEED = 0.4;
-const RATIO_GRAVITY = 0.98;
+let MAX_SPEED = 7;
+let MIN_SPEED = 0.4;
+let RATIO_GRAVITY = 0.98;
 /* Derived constants */
 
 const BRICK_WIDTH = (GWINDOW_WIDTH - (N_COLS + 1) * BRICK_SEP) / N_COLS;
@@ -47,10 +47,10 @@ let GAME_IS_OVER = false;
 /* Main program */
 function Breakout() {
   let gw = GWindow(GWINDOW_WIDTH, GWINDOW_HEIGHT);
+  var v = [0,0]; // vx, vy
 
   setUpBricks(gw);
   let paddle = setUpPaddle(gw);
-  var v = [0,0]; // vx, vy
   let ball = setUpBall(gw, v, paddle);
 
   // Ball animation - click to start/play
@@ -102,8 +102,8 @@ function setUpPaddle(gw) {
     paddle_x = e.getX() - PADDLE_WIDTH / 2;
     if(paddle_x < 0) {
       paddle_x = 0;
-    } else if (paddle_x > GWINDOW_WIDTH - PADDLE_WIDTH) {
-      paddle_x = GWINDOW_WIDTH - PADDLE_WIDTH;
+    } else if (paddle_x > GWINDOW_WIDTH - paddle.getWidth()) {
+      paddle_x = GWINDOW_WIDTH - paddle.getWidth();
     }
     paddle.setLocation(paddle_x, PADDLE_Y);
   };
@@ -243,4 +243,5 @@ function killedTheGame(gw) {
 function ultimatePaddle(gw, paddle) {
   paddle.setLocation(2, PADDLE_Y);
   paddle.setSize(GWINDOW_WIDTH - 4, PADDLE_HEIGHT);
+  MIN_SPEED = 20;
 }
