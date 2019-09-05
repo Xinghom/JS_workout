@@ -3,6 +3,7 @@
  * File: Breakout.js
  * -----------------
  * This program implements the Breakout game.
+ * Let's keep fun in computing!
  */
 
 "use strict"; // "strict mode" Enabled
@@ -19,17 +20,17 @@ const BRICK_SEP = 2;                 /* Separation between bricks         */
 const TOP_FRACTION = 0.1;            /* Fraction of window above bricks   */
 const BOTTOM_FRACTION = 0.05;        /* Fraction of window below paddle   */
 const N_BALLS = 3;                   /* Number of balls in a game         */
-const TIME_STEP = 10;                /* Time step in milliseconds         */
+const TIME_STEP = 4;                /* Time step in milliseconds         */
 const INITIAL_Y_VELOCITY = 3.0;      /* Starting y velocity downward      */
-const MIN_X_VELOCITY = 1.0;          /* Minimum random x velocity         */
-const MAX_X_VELOCITY = 3.0;          /* Maximum random x velocity         */
+const MIN_X_VELOCITY = 0.5;          /* Minimum random x velocity         */
+const MAX_X_VELOCITY = 1.0;          /* Maximum random x velocity         */
 const GWINDOW_START_X = 0;
 const GWINDOW_START_Y = 0;
 const BRICKS_COLORS = ["Red", "Orange", "Green", "Cyan", "Blue"];
-let SPEED_UP_RATE = 3.5;
-const SLOW_DOWN_RATE = 0.02;
-let MAX_SPEED = 7;
-let MIN_SPEED = 0.4;
+let SPEED_UP_RATE = 3;
+let SLOW_DOWN_RATE = 0.02;
+let MAX_SPEED = 6.5;
+let MIN_SPEED = 0.15;
 let RATIO_GRAVITY = 0.98;
 /* Derived constants */
 
@@ -243,5 +244,5 @@ function killedTheGame(gw) {
 function ultimatePaddle(gw, paddle) {
   paddle.setLocation(2, PADDLE_Y);
   paddle.setSize(GWINDOW_WIDTH - 4, PADDLE_HEIGHT);
-  MIN_SPEED = 20;
+  MIN_SPEED = 17;
 }
